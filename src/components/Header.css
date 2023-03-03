@@ -5,6 +5,7 @@
     justify-content: space-evenly;
     border-bottom: 0.1px solid lightgray;
     position: sticky;
+    background-color: #fff;
     top: 0;
     width: 100%;
     z-index: 999;
