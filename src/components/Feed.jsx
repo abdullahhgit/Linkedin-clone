@@ -7,8 +7,34 @@ import CalendarViewDayIcon from "@mui/icons-material/CalendarViewDay";
 import "./Feed.css"
 import InputOption from './InputOption';
 import Post from './Post';
+import {useForm} from "react-hook-form";
+import * as yup from "yup";
+import {yupResolver} from "@hookform/resolvers/yup"
+import { addDoc, collection } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import {auth, db} from "../firebase"
 
 function Feed() {
+  const [user] = useAuthState(auth);
+
+  const schema = yup.object().shape({
+    description: yup.string().required("You must add a post description !!!"),
+  });
+
+  const {register, handleSubmit, formState: {errors},} = useForm({
+    resolver: yupResolver(schema)
+  })
+
+  const postsRef = collection(db, "/posts");
+
+  const onCreatePost = async (data) => {
+    //console.log(data)
+    await addDoc(postsRef, {
+      ...data,
+      username: user?.displayName,
+      id: user?.uid,
+    });
+  };
 
   return (
     <div className='feed'>
@@ -16,8 +42,9 @@ function Feed() {
         <div className="feed__input">
           <CreateIcon />
           <form>
-            <input type="text" />
-            <button type='submit'>Send</button>
+            <input type="text" {...register("description")} />
+            <p style={{color: "red"}}>{errors.description?.message}</p>
+            <button type='submit' onClick={handleSubmit(onCreatePost)}>Send</button>
           </form>
         </div>
         <div className="feed__inputOptions">

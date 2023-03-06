@@ -7,9 +7,24 @@ import HeaderOption from './HeaderOption';
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import ChatIcon from "@mui/icons-material/Chat";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-
+import LoginIcon from '@mui/icons-material/Login';
+import LockIcon from '@mui/icons-material/Lock';
+import { Link } from 'react-router-dom';
+import {auth} from "../firebase"
+import {useAuthState} from "react-firebase-hooks/auth";
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const [user] = useAuthState(auth);
+
+  const navigate = useNavigate();
+
+  const signUserOut = async() => {
+    await signOut(auth);
+    navigate("/login");  
+  };
+
   return (
     <div className='header'>
 
@@ -29,7 +44,22 @@ function Header() {
         <HeaderOption title="Jobs" Icon={BusinessCenterIcon}/>
         <HeaderOption title="Messaging" Icon={ChatIcon}/>
         <HeaderOption title="Notifications" Icon={NotificationsIcon}/>
-        <HeaderOption avatar="https://cdn.pixabay.com/photo/2013/07/13/10/07/man-156584_960_720.png" title="Me"/>
+        {
+          user && (
+            <>
+              <HeaderOption avatar={user ? user.photoURL : "https://cdn.pixabay.com/photo/2013/07/13/10/07/man-156584_960_720.png"}
+              title={user ? user.displayName : "Login"}/>
+              <button className='HeaderOption' onClick={signUserOut}>
+                <LockIcon />
+                <p>logout</p>
+              </button>   
+            </>
+          )
+        }
+        <Link className='HeaderOption' to="/login">
+          <LoginIcon />
+          <p>Login</p>
+        </Link>
       </div>
       
     </div>

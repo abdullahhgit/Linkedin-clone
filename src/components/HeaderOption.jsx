@@ -1,10 +1,11 @@
 import { Avatar } from '@mui/material'
 import React from 'react'
 import "./HeaderOption.css"
+import { Link } from 'react-router-dom';
 
 function HeaderOption({title, Icon, avatar}) {
   return (
-    <div className='HeaderOption'>
+    <Link to="/" className='HeaderOption'>
       {
         Icon && <Icon className="HeaderOption__icon" />
       }
@@ -14,7 +15,7 @@ function HeaderOption({title, Icon, avatar}) {
       }
 
       <h3 className='title'>{title}</h3>
-    </div>
+    </Link>
   )
 }
 
